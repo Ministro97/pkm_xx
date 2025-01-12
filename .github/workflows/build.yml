@@ -58,11 +58,11 @@ jobs:
           echo "::set-output name=added_lines::$ADDED_LINES"
           echo "::set-output name=removed_lines::$REMOVED_LINES"
 
-      - name: Read keyword commit counts
+      - name: Read data
         id: read_counts
         run: |
-          if [ -f keyword_commit_counts.json ]; then
-            COUNTS=$(cat keyword_commit_counts.json)
+          if [ -f data.json ]; then
+            COUNTS=$(cat data.json)
           else
             COUNTS='{"design":0,"gameplay":0,"narrativa":0,"performance":0,"audio":0}'
           fi
