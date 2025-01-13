@@ -18,7 +18,7 @@ jobs:
       - name: Ensure keyword commit counts file exists
         run: |
           if [ ! -f keyword_commit_counts.json ]; then
-            echo '{"design":0,"gameplay":0,"narrativa":0,"performance":0,"audio":0, "rete": 0}' > keyword_commit_counts.json
+            echo '{"design":0,"gameplay":0,"narrativa":0,"performance":0,"audio":0}' > keyword_commit_counts.json
             git config --global user.name "GitHub Actions"
             git config --global user.email "actions@github.com"
             git add keyword_commit_counts.json
@@ -83,7 +83,6 @@ jobs:
           COMMIT_COUNT_NARRATIVA=$(echo "$ORIGINAL_COMMIT_MESSAGE" | grep -i "narrativa" | wc -l)
           COMMIT_COUNT_PERFORMANCE=$(echo "$ORIGINAL_COMMIT_MESSAGE" | grep -i "performance" | wc -l)
           COMMIT_COUNT_AUDIO=$(echo "$ORIGINAL_COMMIT_MESSAGE" | grep -i "audio" | wc -l)
-          COMMIT_COUNT_RETE=$(echo "$ORIGINAL_COMMIT_MESSAGE" | grep -i "rete" | wc -l)
           NEW_COUNTS=$(echo $COUNTS | jq --argjson design $COMMIT_COUNT_DESIGN --argjson gameplay $COMMIT_COUNT_GAMEPLAY --argjson narrativa $COMMIT_COUNT_NARRATIVA --argjson performance $COMMIT_COUNT_PERFORMANCE --argjson audio $COMMIT_COUNT_AUDIO '.design += ($design | tonumber) | .gameplay += ($gameplay | tonumber) | .narrativa += ($narrativa | tonumber) | .performance += ($performance | tonumber) | .audio += ($audio | tonumber)')
           echo $NEW_COUNTS > keyword_commit_counts.json
           echo "::set-output name=new_counts::$NEW_COUNTS"
@@ -119,7 +118,6 @@ jobs:
           COMMIT_COUNT_NARRATIVA=$(echo $COUNTS | jq '.narrativa')
           COMMIT_COUNT_PERFORMANCE=$(echo $COUNTS | jq '.performance')
           COMMIT_COUNT_AUDIO=$(echo $COUNTS | jq '.audio')
-          COMMIT_COUNT_RETE=$(echo $COUNTS | jq '.rete')
           MODIFIED_FILES=$(echo "${{ steps.modified_files.outputs.files }}" | tr ' ' '\n')
           ADDED_KB="${{ steps.modified_files.outputs.added_kb }}"
           REMOVED_KB="${{ steps.modified_files.outputs.removed_kb }}"
@@ -127,7 +125,7 @@ jobs:
           REMOVED_LINES="${{ steps.modified_files.outputs.removed_lines }}"
           ESCAPED_MESSAGE=$(echo "$ORIGINAL_COMMIT_MESSAGE" | sed 's/"/\\"/g' | sed "s/'/\\'/g" | sed 's/&/\\&/g')
           ESCAPED_DESCRIPTION=$(echo "$ORIGINAL_COMMIT_DESCRIPTION" | sed 's/"/\\"/g' | sed "s/'/\\'/g" | sed 's/&/\\&/g')
-          MESSAGE=$(printf "📢 *Nuovo commit in Pokémon XX*\n\n\n*Hash:* \`$ORIGINAL_COMMIT_SHA\`$ORIGINAL_COMMIT_SHA\`\n\n*Autore`\n\n*Autore:* $ORI`$ORIGINAL_COMMIT_SHA\`\n\n*AutoreGINAL_COMMIT_AUTHOR\n\n*Componente:* $ESCAPED_MESSAGE\n\n*Descrizione:* $ESCAPED_DESCRIPTION\n\n*File committati:*\n$MODIFIED_FILES\n\n*Dati aggiunti:* $ADDED_KB KB\n\n*Dati rimossi:* $REMOVED_KB KB\n\n*Linee aggiunte:* $ADDED_LINES\n\n*Linee rimosse:* $REMOVED_LINES\n\n*Totale commit per componente:*\n- Design: $COMMIT_COUNT_DESIGN\n- Gameplay: $COMMIT_COUNT_GAMEPLAY\n- Narrativa: $COMMIT_COUNT_NARRATIVA\n- Performance: $COMMIT_COUNT_PERFORMANCE\n- Audio: $COMMIT_COUNT_AUDIO\n- Rete: $COMMIT_COUNT_RETE\n")
+          MESSAGE=$(printf "📢 *Nuovo commit in Pokémon XX*\n\n\n*Hash:* \`$ORIGINAL_COMMIT_SHA\`\n\n*Autore:* $ORIGINAL_COMMIT_AUTHOR\n\n*Componente:* $ESCAPED_MESSAGE\n\n*Descrizione:* $ESCAPED_DESCRIPTION\n\n*File committati:*\n$MODIFIED_FILES\n\n*Dati aggiunti:* $ADDED_KB KB\n\n*Dati rimossi:* $REMOVED_KB KB\n\n*Linee aggiunte:* $ADDED_LINES\n\n*Linee rimosse:* $REMOVED_LINES\n\n*Totale commit per componente:*\n- Design: $COMMIT_COUNT_DESIGN\n- Gameplay: $COMMIT_COUNT_GAMEPLAY\n- Narrativa: $COMMIT_COUNT_NARRATIVA\n- Performance: $COMMIT_COUNT_PERFORMANCE\n- Audio: $COMMIT_COUNT_AUDIO")
           BUTTON_URL="https://example.com" # Sostituisci con il link desiderato
           BUTTON_TEXT="Clicca qui per maggiori dettagli"
           MAX_MESSAGE_LENGTH=4096
